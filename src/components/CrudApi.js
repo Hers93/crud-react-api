@@ -1,5 +1,5 @@
 import { isValidDateValue } from "@testing-library/user-event/dist/utils";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CrudForm from "./CrudForm";
 import { CrudTable } from "./CrudTable";
 import {helpHttp} from "../helpers/helpHttp";
@@ -12,6 +12,12 @@ const CrudApi = () => {
 
   let api = helpHttp();
   let url = "http://localhost:5000/santos";
+
+  useEffect(()=>{
+    api.get(url).then(res => console.log(res))
+  },[])
+
+ 
 
   const createData = (data) => {
     data.id = Date.now();
