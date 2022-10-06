@@ -3,18 +3,37 @@ import React, { useState, useEffect } from "react";
 import CrudForm from "./CrudForm";
 import { CrudTable } from "./CrudTable";
 import {helpHttp} from "../helpers/helpHttp";
+import Loader from "./Loader";
+import Message from "./Message";
 
 
 
 const CrudApi = () => {
-  const [db, setDb] = useState([]);
+  const [db, setDb] = useState(null);
   const [dataToEdit, setDataToEdit] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoanding] = useState(false)
 
   let api = helpHttp();
   let url = "http://localhost:5000/santos";
 
   useEffect(()=>{
-    api.get(url).then(res => console.log(res))
+    setLoanding(true)
+    setTimeout (() => {
+      api.get(url).then(res => {
+        if(!res.err){
+          setDb(res);
+          setError(null)
+        }else{
+          alert(res.status)
+          setDb(null)
+          setError(res)
+        }
+        setLoanding(false)
+      })
+    },300)
+    
+    
   },[])
 
  
@@ -52,12 +71,16 @@ const CrudApi = () => {
           dataToEdit={dataToEdit}
           setDataToEdit={setDataToEdit}
         />
-
-        <CrudTable
+        {loading &&<Loader/>}
+        {error && <Message msg={`Error ${error.status}: ${error.statusText}`} bgColor="#dc3545"/>}
+        {db && <CrudTable
           data={db}
           deleteData={deleteData}
           setDataToEdit={setDataToEdit}
-        />
+        />}
+        
+        
+        
       </article>
     </div>
   );
